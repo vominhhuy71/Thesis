@@ -1,0 +1,158 @@
+﻿<Window x:Class="InventoryManagement.View.ManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InventoryManagement"
+        xmlns:vm ="clr-namespace:InventoryManagement.ViewModel"
+        mc:Ignorable="d"
+        Title="ManagerWindow"
+        WindowState="Maximized"
+        ResizeMode="CanMinimize"
+        >
+    <Window.DataContext>
+        <vm:ManagerViewModel></vm:ManagerViewModel>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <!--Background Color-->
+        <Style x:Key="BackgroundTheme" TargetType="{x:Type Grid}">
+            <Setter Property="Background" Value="#272743"/>
+        </Style> 
+          
+        <!--Style Radio Button-->
+        <Style BasedOn="{StaticResource {x:Type ToggleButton}}"
+           TargetType="{x:Type RadioButton}"
+           x:Key="MenuButton">
+            <Style.Setters>
+                <Setter Property="Background" Value="#535472" />
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Grid VerticalAlignment="Stretch"
+                                  HorizontalAlignment="Stretch"
+                                  Background="{TemplateBinding Background}">
+                                <TextBlock Text="{TemplateBinding Property=Content}"
+                                           Name="RadioButtonText"
+                                           Margin="50,10,20,10"
+                                           VerticalAlignment="Center"
+                                           Foreground="White"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="RadioButtonText" Property="Foreground" Value="Black" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+
+            <!--IsChecked Event Handler-->
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="#F5F5F5"/>
+                </Trigger>
+            </Style.Triggers>
+            
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition/>
+            <RowDefinition Height="65"/>
+        </Grid.RowDefinitions>
+              
+        <Grid 
+            Grid.Row="0"
+            Style="{StaticResource BackgroundTheme}"
+            >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="1"
+                       Text="Inventory"
+                       Foreground="White"                     
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       FontSize="20"
+                       FontWeight="Medium"
+                       />
+            <TextBlock Grid.Column="6"
+                       Name="UsernameTextBox"
+                       Foreground="White"
+                       HorizontalAlignment="Right"                       
+                       VerticalAlignment="Center"
+                       FontSize="15" 
+                       FontWeight="Medium"
+                       Margin="0,9,3.8,9.2"
+                    />
+            <!--<Menu Grid.Column="7" 
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Foreground="White" Margin="1.2,7,0.2,7.2">
+                <MenuItem>
+                    <MenuItem.Header>
+                        <TextBlock  FontFamily="Segoe MDL2 Assets" FontSize="30">&#xE713;</TextBlock>
+                    </MenuItem.Header>
+                    <MenuItem Header="_New User" Foreground="Black"/>
+
+                </MenuItem>
+            </Menu>-->
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Background="#535472"
+                        >
+                <RadioButton Content="Home"
+                             Height="60"                         
+                             FontSize="15"
+                             IsChecked="True"
+                             Command="{Binding homeViewCommand}"
+                             Style="{StaticResource MenuButton}"/>
+                <RadioButton Content="Orders"
+                             Height="60"
+                             Foreground="Black"
+                             FontSize="15"
+                             Command="{Binding ordersViewCommand}"
+                             Style="{StaticResource MenuButton}"/>
+                <RadioButton Content="Suppliers"
+                             Height="60"
+                             Foreground="White"
+                             FontSize="15"
+                             Command="{Binding suppliersViewCommand}"
+                             Style="{StaticResource MenuButton}"/>
+            </StackPanel>
+            <Grid Grid.Column="1" Background="#F5F5F5">
+                <ContentControl
+                            Content="{Binding CurrentView}"
+                            >
+
+                </ContentControl>
+            </Grid>
+        </Grid>
+        <Grid 
+            Grid.Row="2"
+            Style="{StaticResource BackgroundTheme}"
+            ></Grid>
+    </Grid>
+</Window>

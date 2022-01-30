@@ -1,0 +1,32 @@
+﻿<Window x:Class="InventoryManagement.View.NewItemView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InventoryManagement.View"
+        xmlns:vm="clr-namespace:InventoryManagement.ViewModel"
+
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d"
+        Title="NewItemView" Height="429.374" Width="402.826">
+    <Window.DataContext>
+        <vm:NewItemViewModel></vm:NewItemViewModel>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="42*" />
+        </Grid.RowDefinitions>
+        <Label Content="Name" HorizontalAlignment="Left" Margin="64,28,0,0" VerticalAlignment="Top" Height="29" Width="44"/>
+        <TextBox Text="{Binding Path=Name}" FontSize="15" Padding="0"  VerticalContentAlignment="Center" HorizontalAlignment="Left"  Margin="150,35,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="160" TextChanged="TextBox_TextChanged"/>
+        <Label Content="Type" HorizontalAlignment="Left" Margin="64,26,0,0" VerticalAlignment="Top" Height="29" Width="44" Grid.Row="1"/>
+        <TextBox Text="{Binding Path=Type}"  FontSize="15" Padding="0" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="150,33,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="160" Grid.Row="1"/>
+        <Label Content="Quantity" HorizontalAlignment="Left" Margin="64,31,0,0" VerticalAlignment="Top" Height="29" Width="57" Grid.Row="2"/>
+        <TextBox  Text="{Binding Path=Quantity}" FontSize="15" Padding="0" VerticalContentAlignment="Center" HorizontalAlignment="Left"  Margin="150,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" Grid.Row="2"/>
+        <Button Content="Set Reorder" HorizontalAlignment="Left" Margin="235,18,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75" Height="30"/>
+        <Button   Command="{Binding SaveItem}" Content="Save Item" HorizontalAlignment="Left" Margin="93,18,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75" Height="30"/>
+
+    </Grid>
+</Window>
