@@ -631,7 +631,7 @@ namespace InventoryManagement.Model
                 var smtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
-                    Credentials = new NetworkCredential("huyvothesisemail@gmail.com", "wXv%zMp!m2&F2"),
+                    Credentials = new NetworkCredential("", ""),
                     EnableSsl = true,
                 };
                 var mailMessage = new MailMessage

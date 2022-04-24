@@ -360,3 +360,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Firestore
+*/inventory-93a0b-firebase-adminsdk-9vhm2-4938ea5892.json
