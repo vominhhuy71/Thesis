@@ -1,5 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 using InventoryManagement.View;
+using NETWORKLIST;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,11 +30,12 @@ namespace InventoryManagement.Model
 
         public static async Task initializeInventory()
         {
-
+            
             Orders = await Load_Orders();
             Suppliers = await Load_Suppliers();
             Items = await Load_Items();
             Logs = await Load_Logs();
+
         }
 
         /// <summary>
@@ -54,9 +56,10 @@ namespace InventoryManagement.Model
         /// <returns></returns>
         public static async Task<ObservableCollection<Log>> Load_Logs()
         {
-            FirestoreDb db = GetDbRef();
+            FirestoreDb db = GetDbRef();     
             CollectionReference logsRef = db.Collection("log");
             QuerySnapshot snapshots = await logsRef.GetSnapshotAsync();
+
             ObservableCollection<Log> logs = new ObservableCollection<Log>();
 
             if (snapshots.Documents.Count == 0)
@@ -673,6 +676,15 @@ namespace InventoryManagement.Model
             dispatcherTimer.Start();
         }
 
+        #endregion
+
+        #region Helper
+        public static bool CheckConnectionToInternet()
+        {
+            INetworkListManager networkListManager = new NetworkListManager();
+
+            return networkListManager.IsConnectedToInternet;
+        }
         #endregion
 
     }

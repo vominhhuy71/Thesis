@@ -17,7 +17,16 @@ namespace InventoryManagement
 
         async void InitializeDatabase()
         {
-            await Global.initializeInventory();
+            bool tryConnection = Global.CheckConnectionToInternet();
+            if (tryConnection)
+            {
+                await Global.initializeInventory();
+
+            }
+            else
+            {
+                MessageBox.Show("Not connect to the internet!");
+            }
         }
 
     }

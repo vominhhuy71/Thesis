@@ -7,10 +7,6 @@ namespace InventoryManagement.View
     /// </summary>
     public partial class ManagerWindow : Window
     {
-        private string UserName { get; set; }
-
-        private string Token { get; set; }
-
         public ManagerWindow()
         {
             InitializeComponent();
@@ -18,7 +14,7 @@ namespace InventoryManagement.View
             MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
 
-
+            Height = SystemParameters.MaximizedPrimaryScreenHeight - 100;
         }
 
 
