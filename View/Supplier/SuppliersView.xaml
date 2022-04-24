@@ -10,12 +10,6 @@
     <UserControl.DataContext>
         <vm:SuppliersViewModel></vm:SuppliersViewModel>
     </UserControl.DataContext>
-    <UserControl.Resources>
-        <Style TargetType="ListViewItem" x:Key="listViewDoubleClick">
-            <EventSetter Event="MouseDoubleClick" Handler="listViewDoubleClick_Handler"/>
-        </Style>
-
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
@@ -44,7 +38,9 @@
                  Margin="26.8,20,564,10.4"    
                  Height="40"
                  Name="SearchBox"
-                 TextChanged="TextBox_TextChanged" Grid.Column="1"/>
+                 Grid.Column="1"
+                Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"/>
+            
         </Grid>
 
         <Grid Grid.Row="2" Margin="0,0,0,1.2">
@@ -58,15 +54,38 @@
                   Margin="29,10,12,11"
                   HorizontalAlignment="Stretch" 
                   VerticalAlignment="Stretch"
-                  ItemContainerStyle="{StaticResource listViewDoubleClick}"
-                  ItemsSource="{Binding SupplierList}"
-                  Name="SupplierList">
+                  MouseDoubleClick="listViewDoubleClick_Handler"
+                  ItemsSource="{Binding SuppliersList}"
+                  Name="ItemList" 
+                  SizeChanged="ListView_SizeChanged"
+                  GridViewColumnHeader.Click="GridViewColumnHeader_Click">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Name" Width="250" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="Email" Width="150" DisplayMemberBinding="{Binding Email}"/>
-                        <GridViewColumn Header="Phone" Width="150" DisplayMemberBinding="{Binding Phone}"/>
-                        <GridViewColumn Header="Address" Width="250" DisplayMemberBinding="{Binding Address}"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding SupplierId}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="SupplierId" >Supplier Id</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Name" >Name</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding Email}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Email" >Email</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding Phone}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Phone" >Phone</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding Address}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Address" >Address</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>

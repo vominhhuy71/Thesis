@@ -5,30 +5,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InventoryManagement.View"
              xmlns:vm ="clr-namespace:InventoryManagement.ViewModel"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" >
     <UserControl.DataContext>
         <vm:HomeViewModel></vm:HomeViewModel>
     </UserControl.DataContext>
-    <UserControl.Resources>
-        <Style TargetType="ListViewItem" x:Key="listViewDoubleClick">
-            <EventSetter Event="MouseDoubleClick" Handler="listViewDoubleClick_Handler"/>
-        </Style>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="300"/>
             <RowDefinition Height="70"/>
-            <RowDefinition Height="10"/>
             <RowDefinition/>
             <RowDefinition Height="26.4"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Column="0">
+        <Grid Grid.Row="0">
+            <ContentControl  Content="{Binding newItemView}" Margin="64,15,72,10"/>
+        </Grid>
+        <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="119*"/>
                 <ColumnDefinition Width="681*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" 
-                   FontSize="16" 
-                   Content="Filter:" 
+                    FontSize="16" 
+                   Content="Search:" 
                    HorizontalAlignment="Right" 
                    Margin="42,20,0,0" 
                    VerticalAlignment="Top" 
@@ -42,54 +41,48 @@
                  Margin="26.8,20,564,10.4"    
                  Height="40"
                  Name="SearchBox"
-                 TextChanged="TextBox_TextChanged" Grid.Column="1"/>
+                 Grid.Column="1"
+                 Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}">
+            </TextBox>
         </Grid>
 
-        <Grid Grid.Row="2" Margin="0,0,0,1.2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="132"/>
-            </Grid.ColumnDefinitions>
-            <ListView Grid.Column="0"
+        <ListView Grid.Row="2"
                   FontSize="15"
-                  ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  Margin="29,10,12,11"
-                  HorizontalAlignment="Stretch" 
-                  VerticalAlignment="Stretch"
-                  ItemContainerStyle="{StaticResource listViewDoubleClick}"
-                  ItemsSource="{Binding ItemList}"
-                  Name="ItemList" >
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn  Width="250" DisplayMemberBinding="{Binding Name}">
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  Margin="50,17,50,4"
+                  
+                  ItemsSource="{Binding Path=ItemList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                  Name="ItemList" 
+                  MouseDoubleClick="listViewDoubleClick_Handler"       
+                  GridViewColumnHeader.Click="GridViewColumnHeader_Click"
+                  SizeChanged="ListView_SizeChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Name}">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Tag="Name" >Name</GridViewColumnHeader>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                    <GridViewColumn  DisplayMemberBinding="{Binding Quantity}">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Tag="Quantity" >Quantity</GridViewColumnHeader>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                    <GridViewColumn  DisplayMemberBinding="{Binding Location}">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Tag="Quantity">Location</GridViewColumnHeader>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Type"  DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding ReceivedDate}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Name" Click="GridViewColumnHeader_Click">Name</GridViewColumnHeader>
+                                <GridViewColumnHeader Tag="ReceivedDate">Received Date</GridViewColumnHeader>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn  Width="150" DisplayMemberBinding="{Binding Quantity}">
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="Quantity" Click="GridViewColumnHeader_Click">Quantity</GridViewColumnHeader>
-                            </GridViewColumn.Header>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Location" Width="150" DisplayMemberBinding="{Binding Location}"/>
-                        <GridViewColumn Header="Type" Width="250" DisplayMemberBinding="{Binding Type}"/>
-                        <GridViewColumn Width="250" DisplayMemberBinding="{Binding ReceivedDate}">
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader Tag="ReceivedDate" Click="GridViewColumnHeader_Click">Received Date</GridViewColumnHeader>
-                            </GridViewColumn.Header>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-            <Button Content="New Item" 
-                    Grid.Column="1" 
-                    HorizontalAlignment="Left" 
-                    Margin="35,10,0,0" 
-                    VerticalAlignment="Top" 
-                    Width="75" 
-                    Height="35"
-                    Command="{Binding NewItem}"/>
-        </Grid>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
 
     </Grid>
 </UserControl>

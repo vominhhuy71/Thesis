@@ -1,10 +1,4 @@
 ﻿using InventoryManagement.Model;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace InventoryManagement
@@ -15,14 +9,16 @@ namespace InventoryManagement
     public partial class App : Application
     {
 
-
-        async protected override void OnStartup(StartupEventArgs e)
+        protected override void OnStartup( StartupEventArgs e )
         {
+            InitializeDatabase();
             base.OnStartup(e);
-
-
-
-            await Task.Run(() => Globals.initializeInventory());
         }
+
+        async void InitializeDatabase()
+        {
+            await Global.initializeInventory();
+        }
+
     }
 }

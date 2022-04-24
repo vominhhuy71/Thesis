@@ -3,23 +3,48 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace InventoryManagement.ViewModel
 {
-    class OrderDetailViewModel
+    public class OrderDetailViewModel
     {
         #region Fields
-        public Order Order { get; set; }
-        
-        public Supplier Supplier { get; set; }
-        
-        public Item Item { get; set; }
+        public OrderViewModelClass Order { get; set; }
 
-        public ObservableCollection<Supplier> Suppliers { get; set; }
+        public ObservableCollection<ItemOrderedDetail> itemOrderedDetails { get; set; }
 
-        public ObservableCollection<Item> Items { get; set; }
+        public event Action OnRequestClose = delegate { };
+
+        public IEnumerable<OrderStatus> orderStatusEnum
+        {
+            get
+            {
+                return Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>();
+            }
+        }
+
+        public IEnumerable<OrderType> orderTypeEnum
+        {
+            get
+            {
+                return Enum.GetValues(typeof(OrderType)).Cast<OrderType>();
+            }
+        }
+
+        public bool IsAllowToBeSaved
+        {
+            get
+            {
+                if(!(Order is null) && Order.Status == OrderStatus.FINISHED)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -27,37 +52,103 @@ namespace InventoryManagement.ViewModel
         {
 
         }
-        public OrderDetailViewModel(Order order)
+        public OrderDetailViewModel( string orderId )
         {
-            Order = order;
-            Suppliers = Load_Suppliers();
-            Items = Load_Items();
+            Order order = Global.Orders.Single(o => o.Id == orderId);
+            OrderViewModelClass orderViewModelClass = new OrderViewModelClass()
+            {
+                Id = order.Id,
+                Name = order.Name,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                Type = order.Type,
+                Items = GetItems(order.Items),
+                Supplier = GetSupplier(order.SupplierId)
+            };
 
-            //Item = Items.SingleOrDefault(i => i.Name == Order.Item.Name);
-            Supplier = Suppliers.SingleOrDefault(s => s.SupplierId == Order.SupplierId);
+            Order = orderViewModelClass;
+            itemOrderedDetails = new ObservableCollection<ItemOrderedDetail>(Order.Items);
         }
+
         #endregion
 
         #region Functions
-        private ObservableCollection<Supplier> Load_Suppliers()
+        private Supplier GetSupplier( string SupplierId )
         {
-            ObservableCollection<Supplier> suppliers = new ObservableCollection<Supplier>();
-            //suppliers.Add(new Supplier {SupplierId = 1, Name = "Supplier A", Address = "StreetName 1", Email = "supplierA@test.com", Phone = "0123456789" });
-            //suppliers.Add(new Supplier {SupplierId = 2, Name = "Supplier B", Address = "StreetName 2", Email = "supplierB@test.com", Phone = "0123456789" });
-            //suppliers.Add(new Supplier {SupplierId = 3, Name = "Supplier C", Address = "StreetName 3", Email = "supplierC@test.com", Phone = "0123456789" });
-            //suppliers.Add(new Supplier {SupplierId = 4, Name = "Supplier D", Address = "StreetName 4", Email = "supplierD@test.com", Phone = "0123456789" });
-            //suppliers.Add(new Supplier {SupplierId = 5, Name = "Supplier E", Address = "StreetName 5", Email = "supplierE@test.com", Phone = "0123456789" });
-            return suppliers;
+            for (int i = 0; i < Global.Suppliers.Count(); i++)
+            {
+                if (Global.Suppliers[i].SupplierId == SupplierId) return Global.Suppliers[i];
+            }
+
+            return new Supplier();
         }
 
-        private ObservableCollection<Item> Load_Items()
+        private List<ItemOrderedDetail> GetItems( List<ItemOrdered> Items )
         {
-            ObservableCollection<Item> items = new ObservableCollection<Item>();
-            items.Add(new Item { Id = "10001", Name = "Item1", Location = "A1-1", Quantity = 10, Type = "Book"});
-            items.Add(new Item { Id = "20001", Name = "Item2", Location = "A1-2", Quantity = 5, Type = "Pen" });
-            items.Add(new Item { Id = "10002", Name = "Item3", Location = "A1-3", Quantity = 8, Type = "Book" });
-            items.Add(new Item { Id = "20002", Name = "Item4", Location = "A1-4", Quantity = 7, Type = "Uncategorized" });
-            return items;
+            List<ItemOrderedDetail> ItemsDetail = new List<ItemOrderedDetail>();
+            for (int i = 0; i < Global.Items.Count(); i++)
+            {
+                for (int j = 0; j < Items.Count(); j++)
+                {
+                    if (Items[j].ItemId == Global.Items[i].Id)
+                    {
+                        ItemsDetail.Add(new ItemOrderedDetail { Item = Global.Items[i], Quantity = Items[j].Quantity });
+                    }
+
+                }
+
+            }
+
+            return ItemsDetail;
+        }
+
+        private async void SaveOrder( object o )
+        {
+            Boolean result = await Global.UpdateOrder(Order.Id, Order.Status.ToString(), Order.Items);
+            if (result)
+            {
+                MessageBox.Show("Order is updated!");
+                OnRequestClose?.Invoke();
+
+            }
+        }
+
+        private async void DeleteOrder( object o )
+        {
+            Boolean result = await Global.DeleteOrder(Order.Id);
+            if (result)
+            {
+                MessageBox.Show("Order is deleted!");
+                OnRequestClose?.Invoke();
+            }
+        }
+        #endregion
+
+        #region ICommand
+        RelayCommand _saveChange;
+        public ICommand SaveChange
+        {
+            get
+            {
+                if (_saveChange == null)
+                {
+                    _saveChange = new RelayCommand(o => SaveOrder(o));
+                }
+                return _saveChange;
+            }
+        }
+
+        RelayCommand _deleteOrder;
+        public ICommand Delete
+        {
+            get
+            {
+                if (_deleteOrder == null)
+                {
+                    _deleteOrder = new RelayCommand(o => DeleteOrder(o));
+                }
+                return _deleteOrder;
+            }
         }
         #endregion
     }

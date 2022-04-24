@@ -5,17 +5,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:local="clr-namespace:InventoryManagement.View"
         xmlns:vm ="clr-namespace:InventoryManagement.ViewModel"
+        xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         mc:Ignorable="d" 
         WindowStartupLocation="CenterScreen"
-        d:DesignHeight="450" Width="390.108">
+        Title="New Order" 
+        ResizeMode="NoResize"
+        Height="650" 
+        Width="400">
     <Window.DataContext>
         <vm:NewOrderViewModel/>
     </Window.DataContext>
     <Grid Margin="10,10,2,0">
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="200"/>
+
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -27,21 +31,46 @@
             <ColumnDefinition Width="299*" />
         </Grid.ColumnDefinitions>
 
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="26,10,0,0" TextWrapping="Wrap" Text="{Binding Order.Name}" VerticalAlignment="Top" Width="197" Grid.Column="1"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="26,10,0,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" Width="197" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Margin="4,10,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="59" Height="23"/>
         <TextBlock HorizontalAlignment="Left" Margin="4,10,0,0" TextWrapping="Wrap" Text="Item" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="1"/>
-        <TextBlock HorizontalAlignment="Left" Margin="4,10,0,0" TextWrapping="Wrap" Text="Supplier" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="2"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="26,10,0,0" TextWrapping="Wrap" Text="{Binding Order.Quantity}" VerticalAlignment="Top" Width="197" Grid.Column="1" Grid.Row="3"/>
-        <TextBlock HorizontalAlignment="Left" Margin="4,10,0,0" TextWrapping="Wrap" Text="Quantity" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="3"/>
-        <TextBlock HorizontalAlignment="Left" Margin="4,10,0,0" TextWrapping="Wrap" Text="Order Date" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="4"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="26,18,0,0" TextWrapping="Wrap" Text="{Binding Order.Status}" VerticalAlignment="Top" Width="197" Grid.Column="1" Grid.Row="5"/>
-        <TextBlock HorizontalAlignment="Left" Margin="4,18,0,0" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="5"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="26,19,0,0" TextWrapping="Wrap" Text="{Binding Order.Type}" VerticalAlignment="Top" Width="197" Grid.Column="1" Grid.Row="6"/>
-        <TextBlock HorizontalAlignment="Left" Margin="4,19,0,0" TextWrapping="Wrap" Text="Type" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="6"/>
-        <Button Content="Save Order" Grid.Column="1" HorizontalAlignment="Left" Margin="148,10,0,0" Grid.Row="7" VerticalAlignment="Top" Width="75" Height="20"/>
-        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="26,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="197" ItemsSource="{Binding Path=Items}" DisplayMemberPath="Name" Height="22"/>
-        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="26,11,0,0" Grid.Row="2" VerticalAlignment="Top" Width="197" ItemsSource="{Binding Path=Suppliers}"  DisplayMemberPath="Name" Height="22"/>
-        <DatePicker Grid.Column="1" HorizontalAlignment="Left" Margin="26,9,0,0" Grid.Row="4" VerticalAlignment="Top" Width="197" SelectedDate="{Binding Order.OrderDate}" Height="24"/>
+        <TextBlock HorizontalAlignment="Left" Margin="4,10,0,0" TextWrapping="Wrap" Text="Supplier" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="3"/>
+        <TextBlock HorizontalAlignment="Left" Margin="4,10,0,0" TextWrapping="Wrap" Text="Order Date" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="2"/>
+        <ComboBox HorizontalAlignment="Left" Height="23" Margin="26,18,0,0"  SelectedItem="{Binding Status}" ItemsSource="{Binding orderStatusEnum}" VerticalAlignment="Top" Width="197" Grid.Column="1" Grid.Row="4"/>
+        <TextBlock HorizontalAlignment="Left" Margin="4,18,0,0" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="4"/>
+        <ComboBox HorizontalAlignment="Left" Height="23" Margin="26,19,0,0"  SelectedItem="{Binding Type}" ItemsSource="{Binding orderTypeEnum}" VerticalAlignment="Top" Width="197" Grid.Column="1" Grid.Row="5"/>
+        <TextBlock HorizontalAlignment="Left" Margin="4,19,0,0" TextWrapping="Wrap" Text="Type" VerticalAlignment="Top" Width="59" Height="23" Grid.Row="5"/>
+        <Button Command="{Binding SaveOrder}" Content="Save Order" Grid.Column="1" HorizontalAlignment="Left" Margin="148,10,0,0" Grid.Row="7" VerticalAlignment="Top" Width="75" Height="20"/>
+        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="26,11,0,0" Grid.Row="3" VerticalAlignment="Top" Width="197" ItemsSource="{Binding Path=Suppliers}"  DisplayMemberPath="Name" Height="22" SelectedItem="{Binding SelectedSupplier}"/>
+        <wpfTool:DateTimePicker  Format="FullDateTime" Value="{Binding OrderDate}" Grid.Column="1" HorizontalAlignment="Left" Margin="26,9,0,0" Grid.Row="2" VerticalAlignment="Top" Width="250" Height="24"/>
+        <ListView Grid.Row="1" ItemsSource="{Binding Items}" Margin="26,0,0,65" 
+                  FontSize="15" 
+                  SizeChanged="ListView_SizeChanged"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Left" Width="250" Grid.Column="1"
+                  Name="ItemList"
+                  MouseDoubleClick="listViewDoubleClick_Handler">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn  DisplayMemberBinding="{Binding Item.Id}">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Tag="Id" >Id</GridViewColumnHeader>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                    <GridViewColumn  DisplayMemberBinding="{Binding Item.Name}">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Tag="Name" >Name</GridViewColumnHeader>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                    <GridViewColumn  DisplayMemberBinding="{Binding Quantity}">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Tag="Quantity" >Quantity</GridViewColumnHeader>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Content="Add Item" HorizontalAlignment="Left" Margin="197,152,0,0" Grid.Row="1" VerticalAlignment="Top" Width="79" Height="23" Command="{Binding OpenAddItemDialog}" Grid.Column="1"/>
 
     </Grid>
 </Window>

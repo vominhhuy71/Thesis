@@ -1,0 +1,33 @@
+﻿<Window x:Class="InventoryManagement.View.Order.AddItem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InventoryManagement.View.Order"
+        mc:Ignorable="d"
+        Title="AddItem" Height="172" Width="282"
+        xmlns:vm ="clr-namespace:InventoryManagement.ViewModel"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        >
+    <Window.DataContext>
+        <vm:AddItemViewModel/>
+    </Window.DataContext>
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="99*"/>
+            <ColumnDefinition Width="265*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Item" VerticalAlignment="Center"/>
+        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Quantity" VerticalAlignment="Center" Grid.Row="1"/>
+        <Button Grid.Column="1" Content="Add" HorizontalAlignment="Left" Margin="90,10,0,0" Grid.Row="2" VerticalAlignment="Top" Width="77" Height="26" Command="{Binding AddItemButton}"/>
+        <ComboBox Grid.Column="1" HorizontalAlignment="Center" Margin="0,18,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding Items}"  SelectedValue="{Binding SelectedItem}" DisplayMemberPath="Name" />
+        <TextBox Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Text="{Binding Quantity}"/>
+
+    </Grid>
+</Window>

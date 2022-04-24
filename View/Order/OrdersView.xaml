@@ -11,11 +11,6 @@
     <UserControl.DataContext>
         <vm:OrdersViewModel></vm:OrdersViewModel>
     </UserControl.DataContext>
-    <UserControl.Resources>
-        <Style TargetType="ListViewItem" x:Key="listViewDoubleClick">
-            <EventSetter Event="MouseDoubleClick" Handler="listViewDoubleClick_Handler"/>
-        </Style>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
@@ -44,7 +39,8 @@
                  Margin="26.8,20,564,10.4"    
                  Height="40"
                  Name="SearchBox"
-                 TextChanged="TextBox_TextChanged" Grid.Column="1"/>
+                 Grid.Column="1"
+                Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
         <Grid Grid.Row="2" Margin="0,0,0,1.2">
@@ -58,18 +54,39 @@
                   Margin="29,10,12,11"
                   HorizontalAlignment="Stretch" 
                   VerticalAlignment="Stretch"
-                  ItemContainerStyle="{StaticResource listViewDoubleClick}"
+                  MouseDoubleClick="listViewDoubleClick_Handler"
                   ItemsSource="{Binding OrdersList}"
-                  Name="ItemList">
+                  SelectedItem="{Binding Path=SelectedOrder}"
+                  GridViewColumnHeader.Click="GridViewColumnHeader_Click"
+                  Name="ItemList"
+                  SizeChanged="ListView_SizeChanged">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Name" Width="250" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="Item Name" Width="150" DisplayMemberBinding="{Binding Item.Name}"/>
-                        <GridViewColumn Header="Quantity" Width="150" DisplayMemberBinding="{Binding Quantity}"/>
-                        <GridViewColumn Header="Supplier" Width="150" DisplayMemberBinding="{Binding Supplier.Name}"/>
-                        <GridViewColumn Header="Order Date" Width="250" DisplayMemberBinding="{Binding OrderDate}"/>
-                        <GridViewColumn Header="Status" Width="150" DisplayMemberBinding="{Binding Status}"/>
-                        <GridViewColumn Header="OrderType" Width="150" DisplayMemberBinding="{Binding Type}"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Name" >Name</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding Supplier.Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Supplier.Name" >Supplier</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding OrderDate}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="OrderDate" >Oder Date</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding Status}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Status" >Status</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn  DisplayMemberBinding="{Binding Type}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="Type" >Type</GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>

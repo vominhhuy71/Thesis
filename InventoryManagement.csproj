@@ -134,19 +134,37 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=4.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>packages\Extended.Wpf.Toolkit.4.2.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=4.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>packages\Extended.Wpf.Toolkit.4.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=4.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>packages\Extended.Wpf.Toolkit.4.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=4.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>packages\Extended.Wpf.Toolkit.4.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=4.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>packages\Extended.Wpf.Toolkit.4.2.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\Globals.cs" />
+    <Compile Include="Model\Global.cs" />
     <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\Log.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\Reorder.cs" />
     <Compile Include="Model\Supplier.cs" />
     <Compile Include="ViewModel\ItemVM\ItemViewModel.cs" />
     <Compile Include="ViewModel\ItemVM\NewItemViewModel.cs" />
+    <Compile Include="ViewModel\Log\LogsViewModel.cs" />
+    <Compile Include="ViewModel\Order\AddItemViewModel.cs" />
     <Compile Include="ViewModel\Order\NewOrderViewModel.cs" />
     <Compile Include="ViewModel\Order\OrderDetailViewModel.cs" />
     <Compile Include="ViewModel\ReorderViewModel.cs" />
@@ -159,6 +177,12 @@
     </Compile>
     <Compile Include="View\Item\NewItemView.xaml.cs">
       <DependentUpon>NewItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Log\LogView.xaml.cs">
+      <DependentUpon>LogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Order\AddItem.xaml.cs">
+      <DependentUpon>AddItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ReorderView.xaml.cs">
       <DependentUpon>ReorderView.xaml</DependentUpon>
@@ -178,6 +202,18 @@
     <Compile Include="View\Supplier\SuppliersView.xaml.cs">
       <DependentUpon>SuppliersView.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\Item\NewItemView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Log\LogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Order\AddItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ReorderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -202,10 +238,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Item\NewItemView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\Order\OrdersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -218,7 +250,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Auth.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModel\ItemVM\HomeViewModel.cs" />
     <Compile Include="ViewModel\Shared\ManagerViewModel.cs" />

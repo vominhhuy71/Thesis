@@ -1,24 +1,32 @@
 ﻿using InventoryManagement.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace InventoryManagement.ViewModel
 {
-    class ManagerViewModel : ViewModelBase
-    {   
+    public class ManagerViewModel : ViewModelBase
+    {
         public HomeViewModel homeViewModel { get; set; }
 
         public OrdersViewModel ordersViewModel { get; set; }
 
-
         public SuppliersViewModel suppliersViewModel { get; set; }
 
-        private object _currentView { get; set; }
+        public LogsViewModel logsViewModel { get; set; }
 
+        private DateTime _lastRefresh { get; set; }
+        public DateTime LastRefresh
+        {
+            get { return _lastRefresh; }
+            set
+            {
+                _lastRefresh = value;
+                OnPropertyChanged("LastRefresh");
+            }
+        }
+
+        private object _currentView { get; set; }
         public object CurrentView
         {
             get
@@ -32,6 +40,7 @@ namespace InventoryManagement.ViewModel
             }
         }
 
+
         RelayCommand _homeViewCommand;
         public ICommand homeViewCommand
         {
@@ -39,12 +48,21 @@ namespace InventoryManagement.ViewModel
             {
                 if (_homeViewCommand == null)
                 {
-                    _homeViewCommand = new RelayCommand(o =>
-                    {
-                        CurrentView = homeViewModel;
-                    });
+                    _homeViewCommand = new RelayCommand(async o => await LoadView(o, "item"));
                 }
                 return _homeViewCommand;
+            }
+        }
+        RelayCommand _logViewCommand;
+        public ICommand logsViewCommand
+        {
+            get
+            {
+                if (_logViewCommand == null)
+                {
+                    _logViewCommand = new RelayCommand(async o => await LoadView(o, "log"));
+                }
+                return _logViewCommand;
             }
         }
 
@@ -55,11 +73,7 @@ namespace InventoryManagement.ViewModel
             {
                 if (_ordersViewCommand == null)
                 {
-                    _ordersViewCommand = new RelayCommand(o =>
-                    {
-                        ordersViewModel = new OrdersViewModel();
-                        CurrentView = ordersViewModel;
-                    });
+                    _ordersViewCommand = new RelayCommand(async o => await LoadView(o, "order"));
                 }
                 return _ordersViewCommand;
             }
@@ -73,11 +87,7 @@ namespace InventoryManagement.ViewModel
             {
                 if (_suppliersViewCommand == null)
                 {
-                    _suppliersViewCommand = new RelayCommand(o =>
-                    {
-                        suppliersViewModel = new SuppliersViewModel();
-                        CurrentView = suppliersViewModel;
-                    });
+                    _suppliersViewCommand = new RelayCommand(async o => await LoadView(o, "supplier"));
                 }
                 return _suppliersViewCommand;
             }
@@ -85,8 +95,63 @@ namespace InventoryManagement.ViewModel
 
         public ManagerViewModel()
         {
-            homeViewModel = new HomeViewModel();         
+            LastRefresh = DateTime.Now;
+
+            homeViewModel = new HomeViewModel();
+            homeViewModel.OnLastReload += () =>
+            {
+                LastRefresh = DateTime.Now;
+            };
             CurrentView = homeViewModel;
         }
+
+        public async Task LoadView( object o, string view )
+        {
+            if (view == null) return;
+            if (view == "order")
+            {
+
+                await Global.Load_Orders();
+                ordersViewModel = new OrdersViewModel();
+                ordersViewModel.OnLastReload += () =>
+                {
+                    LastRefresh = DateTime.Now;
+
+                };
+                CurrentView = ordersViewModel;
+
+            }
+            else if (view == "supplier")
+            {
+                await Global.Load_Suppliers();
+                suppliersViewModel = new SuppliersViewModel();
+                suppliersViewModel.OnLastReload += () =>
+                {
+                    LastRefresh = DateTime.Now;
+
+                };
+                CurrentView = suppliersViewModel;
+            }
+            else if (view == "item")
+            {
+                await Global.Load_Items();
+                homeViewModel = new HomeViewModel();
+                homeViewModel.OnLastReload += () =>
+                {
+                    LastRefresh = DateTime.Now;
+                };
+                CurrentView = homeViewModel;
+            }
+            else if (view == "log")
+            {
+                await Global.Load_Logs();
+                logsViewModel = new LogsViewModel();
+                logsViewModel.OnLastReload += () => {
+                    LastRefresh = DateTime.Now;
+                };
+                CurrentView= logsViewModel;
+            }
+        }
+
     }
 }

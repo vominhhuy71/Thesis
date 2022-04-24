@@ -1,26 +1,25 @@
 ﻿using InventoryManagement.Model;
+using InventoryManagement.View;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace InventoryManagement.ViewModel
 {
-    class NewItemViewModel:ViewModelBase
+    public class NewItemViewModel : ViewModelBase
     {
         #region Fields
         private Item _item;
+
+        public event EventHandler OnReloadItems;
         RelayCommand _save;
         #endregion
 
         #region Constructor
-
         public NewItemViewModel()
         {
             _item = new Item();
+            ReceivedDate = DateTime.Now;
         }
 
         #endregion
@@ -32,7 +31,7 @@ namespace InventoryManagement.ViewModel
             {
                 if (!string.IsNullOrEmpty(_item.Name))
                 {
-                return _item.Name;
+                    return _item.Name;
 
                 }
 
@@ -64,6 +63,27 @@ namespace InventoryManagement.ViewModel
                 OnPropertyChanged("Type");
             }
         }
+
+        public string Location
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_item.Location))
+                {
+                    return _item.Location;
+
+                }
+
+                return "";
+            }
+            set
+            {
+                _item.Location = value;
+
+                OnPropertyChanged("Location");
+            }
+        }
+
         public int Quantity
         {
             get
@@ -76,8 +96,23 @@ namespace InventoryManagement.ViewModel
 
                 OnPropertyChanged("Quantity");
             }
-        
-    }
+
+        }
+
+        public DateTime ReceivedDate
+        {
+            get
+            {
+                return _item.ReceivedDate;
+            }
+            set
+            {
+                _item.ReceivedDate = value;
+
+                OnPropertyChanged("ReceivedDate");
+            }
+
+        }
         #endregion
 
 
@@ -93,13 +128,83 @@ namespace InventoryManagement.ViewModel
                 return _save;
             }
         }
+
+
+        private RelayCommand setReorder;
+
+        public ICommand SetReorder
+        {
+            get
+            {
+                if (setReorder == null)
+                {
+                    setReorder = new RelayCommand(o => OpenReorderDialog());
+                }
+
+                return setReorder;
+            }
+        }
         #endregion
 
         #region Event
-        private void SaveItemToServer()
+        private async void SaveItemToServer()
+{
+            Boolean validate = ValidateNewItem();
+            if (!validate)
+            {
+                return;
+            }
+
+            Boolean result = await Global.AddNewItem(_item);
+            if (result)
+            {
+                MessageBox.Show("Save successfully!");
+                _item = new Item();
+                Name = "";
+                Location = "";
+                ReceivedDate = DateTime.Now;
+                Quantity = 0;
+                Type = "";
+
+                OnReloadItems(this, new EventArgs());
+
+            }
+
+        }
+
+        private void OpenReorderDialog()
         {
-            //MessageBox.Show(_item.Name + " " +_item.Type+ " "+ _item.Quantity );
+            ReorderView reorderView = new ReorderView();
+            ReorderViewModel reorderViewModel = new ReorderViewModel();
+            reorderView.DataContext = reorderViewModel;
+            reorderViewModel.OnRequestClose += value =>
+            {
+                _item.Reorder = value;
+                reorderView.Close();
+            };
+            reorderView.ShowDialog();
         }
         #endregion
+
+        private bool ValidateNewItem()
+        {
+            if (String.IsNullOrEmpty(Name) || String.IsNullOrWhiteSpace(Name))
+            {
+                MessageBox.Show("Invalid Name");
+                return false;
+            }
+            if (String.IsNullOrEmpty(Location) || String.IsNullOrWhiteSpace(Location))
+            {
+                MessageBox.Show("Invalid Location");
+                return false;
+            }
+            if (String.IsNullOrEmpty(Type) || String.IsNullOrWhiteSpace(Type))
+            {
+                MessageBox.Show("Invalid Type");
+                return false;
+            }
+            return true;
+        }
+        
     }
 }

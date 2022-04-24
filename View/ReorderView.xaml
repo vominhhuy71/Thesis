@@ -13,22 +13,26 @@
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
+
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="103*"/>
             <ColumnDefinition Width="258*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock HorizontalAlignment="Left" Margin="27,44,0,0" TextWrapping="Wrap" Text="Item" VerticalAlignment="Top"/>
-        <TextBox Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,43,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="141"/>
-        <TextBlock HorizontalAlignment="Left" Margin="27,46,0,0" TextWrapping="Wrap" Text="Minimum" VerticalAlignment="Top" Grid.Row="1"/>
-        <TextBox Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="141" Grid.Row="1"/>
-        <TextBlock HorizontalAlignment="Left" Margin="27,45,0,0" TextWrapping="Wrap" Text="Supplier" VerticalAlignment="Top" Grid.Row="2"/>
-        <Button Content="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="41,29,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75"/>
-        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="41,39,0,0" Grid.Row="2" VerticalAlignment="Top" Width="141"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="27,46,0,0" TextWrapping="Wrap" Text="Minimum" VerticalAlignment="Top" Grid.Row="0"/>
+        <TextBox Text="{Binding Minimum, Mode=TwoWay}" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="141" Grid.Row="0"/>
+        <TextBlock HorizontalAlignment="Left" Margin="27,45,0,0" TextWrapping="Wrap" Text="Supplier" VerticalAlignment="Top" Grid.Row="1"/>
+        <ComboBox DisplayMemberPath="Name" SelectedItem="{Binding SelectedSupplier, Mode=TwoWay}" ItemsSource="{Binding Path=Suppliers}" Grid.Column="1" HorizontalAlignment="Left" Margin="41,45,0,0" Grid.Row="1" VerticalAlignment="Top" Width="141"/>
+        <Button Command="{Binding OnDelete}" Content="Delete" Grid.Column="1" HorizontalAlignment="Left" Margin="10,34,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75"/>
+        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Quantity" VerticalAlignment="Top" Margin="0,33,0,0" Grid.Row="2"/>
+        <TextBox Text="{Binding Quantity, Mode=TwoWay}" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="41,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="141" Grid.Row="2"/>
+        <Button Command="{Binding OnSave}" Content="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="132,34,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
 </Window>

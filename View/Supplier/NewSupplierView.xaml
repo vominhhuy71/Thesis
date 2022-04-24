@@ -36,6 +36,6 @@
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Address:" Margin="10,26,0,26"/>
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Supplier.Address}" Height="29" VerticalAlignment="Center" Margin="9,26.2,111,28.8" />
 
-        <Button Content="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="164,26,0,0" Grid.Row="4" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="164,26,0,0" Grid.Row="4" VerticalAlignment="Top" Width="75" Command="{Binding SaveSupplier}"/>
     </Grid>
 </Window>

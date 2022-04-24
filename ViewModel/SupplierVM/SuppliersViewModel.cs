@@ -1,59 +1,116 @@
 ﻿using InventoryManagement.Model;
 using InventoryManagement.View;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace InventoryManagement.ViewModel
 {
-    class SuppliersViewModel
+    public class SuppliersViewModel : ViewModelBase
     {
         #region Fields
-        public ObservableCollection<Supplier> SupplierList { get; set; }
+        private ObservableCollection<Supplier> _supplierList;
+        public ObservableCollection<Supplier> SuppliersList
+        {
+            get { return _supplierList; }
+            set
+            {
+                _supplierList = value;
+                OnPropertyChanged("SuppliersList");
+            }
+        }
         public Item SelectedSupplier { get; set; }
+
+        public event Action OnLastReload = delegate { };
+
+        private string _filter { get; set; }
+        public string Filter
+        {
+            get
+            {
+                return _filter;
+            }
+            set
+            {
+                _filter = value;
+                FilterSuppliers();
+            }
+        }
         #endregion
 
         #region Constructor
         public SuppliersViewModel()
         {
-            SupplierList = Load_Supplier();
+            SuppliersList = new ObservableCollection<Supplier>();
+            Load_Suppliers();
+
+            Global.InitializeDispatchTimer(DispatchTimer_LoadData);
+
         }
         #endregion
 
         #region Function
-        private ObservableCollection<Model.Supplier> Load_Supplier()
+
+        private void FilterSuppliers()
         {
-            ObservableCollection<Supplier> suppliers = new ObservableCollection<Supplier>();
-            suppliers.Add(new Supplier { Name = "Supplier A", Address = "StreetName 1", Email = "supplierA@test.com", Phone = "0123456789" });
-            suppliers.Add(new Supplier { Name = "Supplier B", Address = "StreetName 2", Email = "supplierB@test.com", Phone = "0123456789" });
-            suppliers.Add(new Supplier { Name = "Supplier C", Address = "StreetName 3", Email = "supplierC@test.com", Phone = "0123456789" });
-            suppliers.Add(new Supplier { Name = "Supplier D", Address = "StreetName 4", Email = "supplierD@test.com", Phone = "0123456789" });
-            suppliers.Add(new Supplier { Name = "Supplier E", Address = "StreetName 5", Email = "supplierE@test.com", Phone = "0123456789" });
-            return suppliers;
+            if (string.IsNullOrEmpty(Filter))
+            {
+                SuppliersList = Global.Suppliers;
+            }
+            else
+            {
+                ObservableCollection<Supplier> foundSuppliers = new ObservableCollection<Supplier>();
+                foreach (var supplier in Global.Suppliers)
+                {
+                    if (supplier.Name.Contains(Filter)) foundSuppliers.Add(supplier);
+                }
+                SuppliersList = foundSuppliers;
+            }
         }
 
-        private void OpenSupplierDialog(object _object)
+        private async void Load_Suppliers()
         {
-            //ItemView itemView = new ItemView();
-            //ItemViewModel itemViewModel = new ItemViewModel((Item)_object);
-            //itemView.DataContext = itemViewModel;
-            //itemView.ShowDialog();
+            await Global.Load_Suppliers();
+            SuppliersList = Global.Suppliers;
 
+            Action action = OnLastReload;
+            if (action != null)
+            {
+                action();
+            }
+        }
+
+        private void OpenSupplierDialog( object _object )
+        {
             SupplierDetail supplierDetailView = new SupplierDetail();
             SupplierDetailViewModel supplierDetailViewModel = new SupplierDetailViewModel((Supplier)_object);
             supplierDetailView.DataContext = supplierDetailViewModel;
+            supplierDetailViewModel.OnRequestClose += () =>
+           {
+               supplierDetailView.Close();
+               Load_Suppliers();
+
+           };
             supplierDetailView.ShowDialog();
         }
 
         private void OpenNewSupplierDialog()
         {
             NewSupplierView newSupplierView = new NewSupplierView();
+            NewSupplierViewModel newSupplierViewModel = new NewSupplierViewModel();
+            newSupplierView.DataContext = newSupplierViewModel;
+            newSupplierViewModel.OnRequestClose += () =>
+           {
+               newSupplierView.Close();
+               Load_Suppliers();
+           };
             newSupplierView.ShowDialog();
-            Load_Supplier();
+        }
+
+
+        public void DispatchTimer_LoadData( object sender, EventArgs e )
+        {
+            Load_Suppliers();
         }
         #endregion
 

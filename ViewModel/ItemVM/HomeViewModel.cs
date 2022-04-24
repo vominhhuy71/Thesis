@@ -1,32 +1,64 @@
 ﻿using InventoryManagement.Model;
 using InventoryManagement.View;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace InventoryManagement.ViewModel
 {
-    
-    class HomeViewModel: ViewModelBase
-    {
-        #region Constructor
-        public HomeViewModel()
-        {
-            ItemList = LoadData();
-        }
 
-        #endregion
+    public class HomeViewModel : ViewModelBase
+    {
 
         #region Fields
-        public Item SelectedItem { get; set; }
+        public NewItemView newItemView { get; set; }
 
-        public ObservableCollection<Item> ItemList { get; set; }
+        private ObservableCollection<Item> _itemList { get; set; }
+        public ObservableCollection<Item> ItemList
+        {
+            get
+            {
+                return _itemList;
+            }
+            set
+            {
+                _itemList = value;
+                OnPropertyChanged("ItemList");
+            }
+        }
+        private string _filter { get; set; }
+        public string Filter
+        {
+            get
+            {
+                return _filter;
+            }
+            set
+            {
+                _filter = value;
+                FilterItems();
+            }
+        }
+
+
+        public event Action OnLastReload = delegate { };
+        #endregion
+
+        #region Constructor
+
+        public HomeViewModel()
+        {
+            ItemList = new ObservableCollection<Item>();
+
+            LoadData();
+
+            newItemView = new NewItemView();
+            NewItemViewModel newItemViewModel = new NewItemViewModel();
+            newItemView.DataContext = newItemViewModel;
+            newItemViewModel.OnReloadItems += ( s, e ) => LoadData();
+
+            Global.InitializeDispatchTimer(DispatchTimer_LoadData);
+        }
 
         #endregion
 
@@ -38,59 +70,57 @@ namespace InventoryManagement.ViewModel
             {
                 if (_ItemSelected == null)
                 {
-                    _ItemSelected = new RelayCommand(o=>OpenItemDialog(o));
+                    _ItemSelected = new RelayCommand(o => OpenItemDialog(o));
                 }
                 return _ItemSelected;
             }
         }
-
-        RelayCommand _newItem;
-        public ICommand NewItem
-        {
-            get
-            {
-                if (_newItem == null)
-                {
-                    _newItem = new RelayCommand(o => OpenNewItemDialog());
-                }
-                return _newItem;
-            }
-        }
-
         #endregion
 
         #region Helper Function
-        private void OpenItemDialog(object _object)
+        private void OpenItemDialog( dynamic _object )
         {
             ItemView itemView = new ItemView();
-            ItemViewModel itemViewModel = new ItemViewModel((Item)_object);
+            ItemViewModel itemViewModel = new ItemViewModel(_object.Id);
             itemView.DataContext = itemViewModel;
+            itemViewModel.OnRequestSave += () => LoadData();
             itemView.ShowDialog();
 
         }
 
-        private void OpenNewItemDialog()
+        private void FilterItems()
         {
-            NewItemView newItemView = new NewItemView();
-            NewItemViewModel newItemViewModel = new NewItemViewModel();
-            newItemView.DataContext = newItemViewModel;
-            newItemView.ShowDialog();
+            if (string.IsNullOrEmpty(Filter))
+            {
+                ItemList = Global.Items;
+            }
+            else
+            {
+                ObservableCollection<Item> foundItems = new ObservableCollection<Item>();
+                foreach (var item in Global.Items)
+                {
+                    if (item.Name.Contains(Filter)) foundItems.Add(item);
+                }
+                ItemList = foundItems;
+            }
         }
 
-        public ObservableCollection<Item> LoadData()
+        public async void LoadData()
         {
-            DateTime localDate = DateTime.Now;
-            ObservableCollection<Item> items = new ObservableCollection<Item>();
-            items.Add(new Item { Id = "10001", Name = "Item1", Location = "A1-1", Quantity = 10, Type = "Book", ReceivedDate = localDate });
-            items.Add(new Item { Id = "20001", Name = "Item2", Location = "A1-2", Quantity = 5, Type = "Pen", ReceivedDate = localDate });
-            items.Add(new Item { Id = "10002", Name = "Item3", Location = "A1-3", Quantity = 8, Type = "Book", ReceivedDate = localDate });
-            items.Add(new Item { Id = "20002", Name = "Item4", Location = "A1-4", Quantity = 7, Type = "Uncategorized", ReceivedDate = localDate });
+            await Global.Load_Items();
+            Action action = OnLastReload;
+            if (action != null)
+            {
+                action();
+            }
 
-            //var client = new WebClient();
-            //string response = client.DownloadString("https://inventory-93a0b-default-rtdb.europe-west1.firebasedatabase.app/product.json");
-            //ObservableCollection<Item> items = JsonConvert.DeserializeObject<ObservableCollection<Item>>(response) ;
+            ItemList = Global.Items;
 
-            return items;
+        }
+
+        public void DispatchTimer_LoadData( object sender, EventArgs e )
+        {
+            LoadData();
         }
         #endregion
     }

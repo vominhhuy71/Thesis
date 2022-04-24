@@ -4,9 +4,9 @@
              xmlns:local="clr-namespace:InventoryManagement"
              xmlns:vm="clr-namespace:InventoryManagement.ViewModel"
              xmlns:view ="clr-namespace:InventoryManagement.View"
-             StartupUri="View/Shared/ManagerWindow.xaml">
+             StartupUri="View/Shared/ManagerWindow.xaml"
+             >
     <Application.Resources>
-        
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
             <view:HomeView/>
         </DataTemplate>
@@ -16,6 +16,9 @@
         </DataTemplate> 
         <DataTemplate DataType="{x:Type vm:SuppliersViewModel}">
             <view:SuppliersView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LogsViewModel}">
+            <view:LogView/>
         </DataTemplate>
     </Application.Resources>
 </Application>

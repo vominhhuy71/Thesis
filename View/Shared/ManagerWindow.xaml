@@ -7,8 +7,11 @@
         xmlns:vm ="clr-namespace:InventoryManagement.ViewModel"
         mc:Ignorable="d"
         Title="ManagerWindow"
-        WindowState="Maximized"
-        ResizeMode="CanMinimize"
+        ResizeMode="CanResize"
+        MinWidth="1000"
+        MinHeight="1000"
+        WindowStartupLocation="CenterScreen" 
+        
         >
     <Window.DataContext>
         <vm:ManagerViewModel></vm:ManagerViewModel>
@@ -18,8 +21,8 @@
         <!--Background Color-->
         <Style x:Key="BackgroundTheme" TargetType="{x:Type Grid}">
             <Setter Property="Background" Value="#272743"/>
-        </Style> 
-          
+        </Style>
+
         <!--Style Radio Button-->
         <Style BasedOn="{StaticResource {x:Type ToggleButton}}"
            TargetType="{x:Type RadioButton}"
@@ -55,17 +58,17 @@
                     <Setter Property="Background" Value="#F5F5F5"/>
                 </Trigger>
             </Style.Triggers>
-            
+
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
             <RowDefinition/>
             <RowDefinition Height="65"/>
         </Grid.RowDefinitions>
-              
+
         <Grid 
             Grid.Row="0"
             Style="{StaticResource BackgroundTheme}"
@@ -141,6 +144,12 @@
                              FontSize="15"
                              Command="{Binding suppliersViewCommand}"
                              Style="{StaticResource MenuButton}"/>
+                <RadioButton Content="History"
+                             Height="60"
+                             Foreground="White"
+                             FontSize="15"
+                             Command="{Binding logsViewCommand}"
+                             Style="{StaticResource MenuButton}"/>
             </StackPanel>
             <Grid Grid.Column="1" Background="#F5F5F5">
                 <ContentControl
@@ -153,6 +162,9 @@
         <Grid 
             Grid.Row="2"
             Style="{StaticResource BackgroundTheme}"
-            ></Grid>
+            >
+            <TextBlock HorizontalAlignment="Left" Margin="827,10,0,0" TextWrapping="Wrap" Text="{Binding LastRefresh, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" Width="162" Height="36" Background="Transparent" Foreground="White"/>
+            <Label Content="Last Reload:" HorizontalAlignment="Left" Margin="745,5,0,0" VerticalAlignment="Top" Height="36" Width="77" Foreground="White"/>
+        </Grid>
     </Grid>
 </Window>
